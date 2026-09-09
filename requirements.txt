@@ -1,0 +1,7 @@
+# MarkItDown GUI - runtime dependencies
+markitdown[all]>=0.1.7
+gradio>=5.0
+openai
+
+# Build (only needed when creating the EXE via PyInstaller)
+pyinstaller>=6.0

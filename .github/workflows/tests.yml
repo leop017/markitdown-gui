@@ -1,0 +1,17 @@
+name: lint
+on: [pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Syntax check
+        run: python -m py_compile markitdown_gui.py
+      - name: Install deps & import check
+        run: |
+          pip install "markitdown[all]" gradio openai
+          python -c "import markitdown_gui"
