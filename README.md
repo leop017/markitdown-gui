@@ -32,7 +32,7 @@ python markitdown_gui.py
 
 启动后浏览器自动打开 `http://127.0.0.1:7860/`。
 
-> 端口被占用时会自动寻找下一个可用端口，并写入 `current_port.txt`。
+> 端口被占用时会自动寻找下一个可用端口，并写入 `current_port.txt`。该文件写在**程序所在目录**（EXE 模式下为 `MarkItDown.exe` 所在目录，源码模式下为 `markitdown_gui.py` 所在目录）；启动时若默认端口被占用会自动换到 7861/7862 等，并同步删除旧的 `current_port.txt`。
 
 ## 构建 EXE
 
