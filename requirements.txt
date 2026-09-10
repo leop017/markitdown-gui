@@ -3,5 +3,8 @@ markitdown[all]==0.1.7
 gradio==5.50.0
 openai==3.8.0
 
+# Third-party plugins (discovered via markitdown.plugin entry points)
+markitdown-ocr==0.1.0
+
 # Build (only needed when creating the EXE via PyInstaller)
 pyinstaller==6.20.0

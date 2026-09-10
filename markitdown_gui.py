@@ -180,6 +180,31 @@ def _show_download_if_content(md_text):
     return gr.Button(visible=visible)
 
 
+# ── 第三方插件检测 ──────────────────────────────────────────────────────────────
+def _detect_installed_plugins():
+    """返回已安装的 markitdown 插件名称（通过 markitdown.plugin 入口点发现）。"""
+    try:
+        from importlib.metadata import entry_points
+        names = [ep.name for ep in entry_points(group="markitdown.plugin")]
+        return sorted(set(names))
+    except Exception:
+        return []
+
+
+def on_plugin_toggle(checked):
+    """勾选「启用第三方插件」时，显示已检测到的插件及 LLM 依赖提示。"""
+    if not checked:
+        return ""
+    plugins = _detect_installed_plugins()
+    if not plugins:
+        return "⚠️ 未检测到任何 markitdown 插件（markitdown.plugin 入口点为空）。"
+    names = "、".join(plugins)
+    return (
+        f"✅ 已启用插件：{names}。"
+        "markitdown-ocr 需配合「使用 LLM 描述图片」填写 LLM 参数，未填写时 OCR 会被跳过。"
+    )
+
+
 # ── LLM 连通性检测 ─────────────────────────────────────────────────────────────
 def on_test_llm(llm_base_url, llm_api_key, llm_model):
     """向配置的 LLM 端点发送一次最小请求，返回连接状态。"""
@@ -350,7 +375,16 @@ with gr.Blocks(
                         enable_plugins_cb = gr.Checkbox(
                             label="启用第三方插件（OCR 等）",
                             value=False,
-                            info="需要已安装 markitdown-ocr 等插件",
+                            info="将加载已安装的 markitdown 插件（如 markitdown-ocr）",
+                        )
+                        plugin_status_txt = gr.Textbox(
+                            label=None, value="", interactive=False,
+                            max_lines=3, elem_classes=["llm-status"],
+                        )
+                        enable_plugins_cb.change(
+                            fn=on_plugin_toggle,
+                            inputs=[enable_plugins_cb],
+                            outputs=[plugin_status_txt],
                         )
 
                         with gr.Accordion("🔗 LLM 连接配置", open=False):

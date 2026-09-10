@@ -68,6 +68,25 @@ class TestFindFreePort:
         assert free_port == 18000
 
 
+class TestDetectInstalledPlugins:
+    def test_returns_list(self):
+        plugins = gui._detect_installed_plugins()
+        assert isinstance(plugins, list)
+
+    def test_names_are_strings(self):
+        plugins = gui._detect_installed_plugins()
+        assert all(isinstance(name, str) for name in plugins)
+
+
+class TestOnPluginToggle:
+    def test_unchecked_returns_empty(self):
+        assert gui.on_plugin_toggle(False) == ""
+
+    def test_checked_returns_string(self):
+        msg = gui.on_plugin_toggle(True)
+        assert isinstance(msg, str)
+
+
 class TestConvertSingle:
     def test_simple_text_file(self):
         with tempfile.NamedTemporaryFile(

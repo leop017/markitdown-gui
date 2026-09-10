@@ -9,6 +9,10 @@ from PyInstaller.utils.hooks import collect_data_files, copy_metadata
 magika_data = collect_data_files("magika")
 markitdown_data = collect_data_files("markitdown")
 onnxruntime_data = collect_data_files("onnxruntime")
+try:
+    markitdown_ocr_data = collect_data_files("markitdown_ocr")
+except Exception:
+    markitdown_ocr_data = []
 
 # --- PyInstaller onefile fix: patch gradio/component_meta.py --------------
 # In one-file builds, component_meta.create_or_modify_pyi fails because
@@ -97,6 +101,8 @@ hidden_imports = [
     "markitdown.converter_utils.docx.math",
     "markitdown.converter_utils.docx.math.omml",
     "markitdown.converter_utils.docx.math.latex_dict",
+    # Third-party plugins (markitdown.plugin entry points, imported lazily at runtime)
+    "markitdown_ocr",
     # Magika file-type detection
     "magika",
     "magika.magika",
@@ -211,6 +217,7 @@ datas = []
 datas.extend(magika_data)
 datas.extend(markitdown_data)
 datas.extend(onnxruntime_data)
+datas.extend(markitdown_ocr_data)
 datas.extend(collect_data_files("gradio"))
 if _blocks_events.exists():
     datas.append((str(_tmp_dir / "blocks_events.py"), "gradio"))
@@ -245,6 +252,10 @@ datas.extend(collect_data_files("httpcore"))
 datas.extend(collect_data_files("httpx"))
 datas.extend(copy_metadata("markitdown"))
 datas.extend(copy_metadata("magika"))
+try:
+    datas.extend(copy_metadata("markitdown-ocr"))
+except Exception:
+    pass
 datas.extend(copy_metadata("gradio"))
 datas.extend(copy_metadata("gradio_client"))
 datas.extend(copy_metadata("huggingface_hub"))
