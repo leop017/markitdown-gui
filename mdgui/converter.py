@@ -33,7 +33,13 @@ def _resolve_ip(url: str):
 
 
 def _is_safe_url(url: str) -> bool:
-    """Reject URLs that resolve to private / loopback / link-local / reserved IPs."""
+    """Reject URLs that resolve to private / loopback / link-local / reserved IPs.
+
+    Only http:// and https:// schemes are allowed.
+    """
+    scheme = (urlparse(url).scheme or "").lower()
+    if scheme not in ("http", "https"):
+        return False
     ip = _resolve_ip(url)
     if ip is None:
         return True  # unresolvable → let the fetch itself fail with a clear error

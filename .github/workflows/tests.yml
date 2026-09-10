@@ -18,7 +18,7 @@ jobs:
       - name: Ruff lint
         run: |
           pip install ruff
-          ruff check markitdown_gui.py _pyinstaller_runtime_hook.py _internal_patches/ tests/
+          ruff check mdgui/ markitdown_gui.py _pyinstaller_runtime_hook.py _internal_patches/ tests/
       - name: Install deps & import check
         run: |
           pip install -r requirements.txt

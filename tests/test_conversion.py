@@ -148,6 +148,15 @@ class TestIsSafeUrl:
         # Unresolvable hostnames pass through; the fetch itself will fail
         assert _is_safe_url("http://definitely-not-a-real-xyz.invalid/") is True
 
+    def test_file_uri_blocked(self):
+        assert _is_safe_url("file:///C:/Windows/System32/cmd.exe") is False
+
+    def test_data_uri_blocked(self):
+        assert _is_safe_url("data:text/plain;base64,SGVsbG8=") is False
+
+    def test_non_http_scheme_blocked(self):
+        assert _is_safe_url("ftp://example.com/file.txt") is False
+
 
 class TestConvertUrlsGenerator:
     def test_empty_input(self):

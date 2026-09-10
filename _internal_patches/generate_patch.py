@@ -35,17 +35,23 @@ def _load_orig():
 _ns = {{}}
 exec(_load_orig(), _ns)  # type: ignore[reportUnknownVariableType]
 
-# ── Override create_or_modify_pyi: no-op to avoid reading .py source from PYZ ──
-def create_or_modify_pyi(component_class, class_name, events):  # type: ignore[reportRedeclaration]
+
+# ── Define no-op / safe overrides with distinct names ──
+def _noop_create_or_modify_pyi(component_class, class_name, events):
+    """No-op: skip writing .py source files from PYZ archive."""
     pass
 
 
-# ── Override get_local_contexts: safe defaults for frozen environments ──
-def get_local_contexts():  # type: ignore[reportRedeclaration]
+def _safe_get_local_contexts():
+    """Return safe defaults (no Jupyter/Sphinx contexts) for frozen environments."""
     return (False, False)
 
 
-# ── Copy everything from original namespace into this module ──
+# ── Patch the namespace BEFORE copying ──
+_ns["create_or_modify_pyi"] = _noop_create_or_modify_pyi
+_ns["get_local_contexts"] = _safe_get_local_contexts
+
+# ── Copy everything (including patched entries) into this module ──
 for _k, _v in _ns.items():
     globals()[_k] = _v  # type: ignore[misc]
 '''
