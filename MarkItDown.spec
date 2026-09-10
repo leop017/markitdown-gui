@@ -63,6 +63,17 @@ else:
 
 # -- Hidden imports for full markitdown feature set (NO feature dropping) --
 hidden_imports = [
+    # -- mdgui application package --
+    "mdgui",
+    "mdgui.app",
+    "mdgui.converter",
+    "mdgui.downloader",
+    "mdgui.llm",
+    "mdgui.plugins",
+    "mdgui.port_utils",
+    "mdgui.process_utils",
+    "mdgui.ui",
+
     # markitdown: every converter is opt-in via imports
     "markitdown",
     "markitdown.__main__",
