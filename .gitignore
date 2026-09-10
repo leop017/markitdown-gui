@@ -55,6 +55,9 @@ coverage.xml
 cover/
 .test-logs/
 
+# Ruff
+.ruff_cache/
+
 # Translations
 *.mo
 *.pot

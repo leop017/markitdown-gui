@@ -1,8 +1,6 @@
 """Generate the component_meta patch with embedded original source."""
-import shutil
 import base64
 import os
-
 PATCH_DIR = os.path.dirname(os.path.abspath(__file__))
 ORIG_SOURCE_FILE = os.path.join(PATCH_DIR, "gradio_component_meta_orig.py")
 PATCH_FILE = os.path.join(PATCH_DIR, "component_meta.py")

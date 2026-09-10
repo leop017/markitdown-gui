@@ -8,7 +8,6 @@ import time
 # ── PyInstaller onefile fix (handled by _pyinstaller_runtime_hook.py) ────────
 # The runtime hook patches Path.read_text and gradio.component_meta.create_or_modify_pyi
 # BEFORE any gradio import. See _pyinstaller_runtime_hook.py for details.
-from pathlib import Path
 import gradio as gr
 
 logging.getLogger("uvicorn").setLevel(logging.WARNING)
@@ -544,8 +543,8 @@ def _kill_old_instances():
             try:
                 name_buf = ctypes.create_unicode_buffer(1024)
                 if GetModuleFileNameExW(h, None, name_buf, 1024):
-                    full = name_buf.value or ""
-                    if any(s in full.lower() for s in target_substrings):
+                    basename = os.path.basename(name_buf.value or "").lower()
+                    if any(s in basename for s in target_substrings):
                         TerminateProcess(h, 1)
             finally:
                 CloseHandle(h)
