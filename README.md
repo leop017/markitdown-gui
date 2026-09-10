@@ -2,11 +2,13 @@
 
 基于 [Microsoft MarkItDown](https://github.com/microsoft/markitdown) 的图形化文档转换工具，将多种格式文件一键转换为 Markdown。
 
+**版本**: v1.0.0
+
 ## 功能
 
 - **文件转换** — 支持 Word、PDF、PPT、Excel、图片、音频、HTML、CSV、EPUB、ZIP、邮件等
 - **批量处理** — 拖放多个文件，逐条转换并合并输出
-- **网页抓取** — 输入 URL 批量抓取并转为 Markdown
+- **网页抓取** — 输入 URL 批量抓取并转为 Markdown（含 SSRF 防护 + scheme 白名单）
 - **LLM 图片描述** — 配置任意 OpenAI 兼容接口，自动为图片生成描述
 - **第三方插件** — 支持 markitdown-ocr 等 OCR 插件
 - **一键下载** — 转换结果保存为 `.md` 文件
@@ -59,15 +61,39 @@ pyinstaller MarkItDown.spec
 ## 项目结构
 
 ```
-markitdown_gui.py            # GUI 主程序
+markitdown_gui.py            # 入口脚本（薄壳，调用 mdgui.app.main）
+mdgui/                       # 核心应用包
+├── __init__.py              # 日志加固（dictConfig 安全补丁）
+├── converter.py             # 文件/URL 转换 + SSRF 防护
+├── llm.py                   # LLM 配置构建与连接测试
+├── plugins.py               # 插件检测
+├── downloader.py            # 下载处理
+├── port_utils.py            # 端口工具
+├── process_utils.py         # EXE 旧实例管理
+├── ui.py                    # CSS + Gradio UI
+└── app.py                   # 主入口逻辑
 MarkItDown.spec             # PyInstaller 构建配置
 _pyinstaller_runtime_hook.py # PyInstaller 运行时钩子（Gradio 兼容）
 _internal_patches/          # Gradio 组件补丁
 ├── component_meta.py
 ├── generate_hook.py
 └── generate_patch.py
+tests/
+└── test_conversion.py       # 单元测试（32 用例）
 requirements.txt
 ```
+
+## Changelog
+
+### v1.0.0
+
+- **代码重构** — 单文件拆分为 `mdgui/` 包（9 模块），提升可维护性
+- **安全加固**
+  - URL 抓取增加 SSRF 防护（阻止内网/回环/链路本地/保留 IP）
+  - 非 `http`/`https` scheme（`file:`、`data:`、`ftp:` 等）直接拒绝
+  - 进程管理改为完整路径匹配，避免误杀无关进程
+- **测试补充** — 从 14 个测试扩展到 32 个，覆盖 SSRF、下载、LLM 等核心路径
+- **修复** — `generate_patch.py` 模板逻辑损坏问题
 
 ## 致谢
 
